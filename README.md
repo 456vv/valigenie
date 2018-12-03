@@ -1,4 +1,4 @@
-# valigenie [![Build Status](https://travis-ci.org/456vv/valexa.svg?branch=master)](https://travis-ci.org/456vv/valigenie)
+# valigenie [![Build Status](https://travis-ci.org/456vv/valigenie.svg?branch=master)](https://travis-ci.org/456vv/valigenie)
 golang valigenie，天猫精灵自定义版本
 
 # **列表：**
