@@ -22,7 +22,11 @@ package valigenie
 	}],
 	"botId": 29758,
 	"domainId": 18628,
-	"requestId": "20180612194925775-1062531537"
+	"requestId": "20180612194925775-1062531537",
+  	"skillSession": {
+        "skillSessionId":"8d7501fe-a80a-46cf-a43f-ff8743a7ec66",
+        "newSession":true
+    }
 }
 
 */
@@ -37,7 +41,11 @@ type RequestSlotEntitie struct{
 	SlotName				string		`json:"slotName"`						//1,slot名称
 	SlotValue				string		`json:"slotValue"`						//1,slot值
 }
-	
+
+type RequestSkillSession struct{
+	SkillSessionId	string				`json:"skillSessionId"`					//1,技能粒度session的id
+	NewSession		bool				`json:"newSession"`						//1,用户首次进入技能时或技能交互中用户有跳出技能，再次进入技能时：true
+}
 type Request struct {
 	SessionId	string					`json:"sessionId"`						//1,会话ID，session内的对话此ID相同
 	BotId		int64					`json:"botId"`							//1,应用ID，来自于创建的应用或者技能
@@ -51,6 +59,8 @@ type Request struct {
 	DomainId	int64					`json:"domainId"`						//1,领域ID
 	IntentId	int64					`json:"intentId"`						//1,意图ID
 	RequestId	string					`json:"requestId"`						//1,请求Id
+	ConfirmStatus string				`json:"confirmStatus"`					//0,用于用户回复确认。"CONFIRMED"表示确认。"DENIED"表示否认
+	SkillSession RequestSkillSession	`json:"skillSession"`					//1,技能粒度的session信息
 }
 
 //参数名

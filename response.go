@@ -26,15 +26,47 @@ import (
 //        "properties": {},
 //        "executeCode": "SUCCESS",
 //        "msgInfo": ""
+//        "gwCommands": [
+//            {
+//                "commandDomain": "AliGenie.Speaker",
+//                "commandName": "Speak",
+//                "payload": {
+//                  	"type": "text",             //默认 text
+//                    	"text": "这是语音播放的TTS需要用到的Command",
+//                  	"expectSpeech": true,       //是否开麦,默认 false
+//                  	"needLight": true,          //开麦时是否需要灯光提示用户
+//                  	"needVoice": true,          //开麦时是否需要声音提示用户
+//                  	"wakeupType": "continuity"  // 如果需要开麦，这里需要设置为 continuity
+//                }
+//            }
+//        ]
 //    }
 //}
+
+//追问的意图名称和ID，ResultType需在设置为"ASK_INF"
 type ResponseValueAskedInfo struct{
 	ParameterName	string					`json:"parameterName"`		//1，询问的参数名（非实体名）
 	IntentId		int64					`json:"intentId"`			//1，意图ID，从请求参数中可以获得
 }
+
+//根据音频素材id播放音频素材
 type ResponseValueAction struct{
 	Name			string					`json:"name"`				//1，Action名，该名字必须设置为“audioPlayGenieSource”
 	Properties		map[string]string		`json:"properties"`			//1，Action中的信息字段，“audioGenieId”的key必须设置，标示播放的开放平台存储的音频ID
+}
+
+//gwCommands 字段是 V3.0 SDK 中一个特殊的字段，在响应数据中携带了gwCommands 后，原 reply、actions 字段会被忽略。
+//自定义技能中使用 TPL 模板，需要在响应数据中 gwCommands 字段里携带页面展示需要的数据
+type ResponseGwCommands struct{
+	CommandDomain	string					`json:"commandDomain"`		//1,指令命名空间
+	CommandName		string					`json:"commandName"`		//1,指令名称
+	Payload			map[string]interface{}	`json:"payload"`			//1,指令数据
+}
+
+//确认信息，ResultType需在设置为"CONFIRM"
+type ResponseConfirmParaInfo struct{
+	ConfirmParameterName	string			`json:"confirmParameterName"`	//1,用户表达匹配到此参数，表示"确定"意思
+	DenyParameterName		string			`json:"denyParameterName"`		//1,用户表达匹配到此参数，表示"否定"意思
 }
 
 type ResponseValue struct{
@@ -42,7 +74,9 @@ type ResponseValue struct{
 	ResultType		string					`json:"resultType"`					//1，回复时的状态标识（ASK_INF：信息获取，例如“请问从哪个城市出发”，在此状态下，用户说的下一句话优先进入本意图进行有效信息抽取 RESULT：正常完成交互的阶段并给出回复 CONFIRM：期待确认）
 	Properties		map[string]string		`json:"properties,omitempty"`		//0，生成回复语句时携带的额外信息
 	AskedInfos		[]ResponseValueAskedInfo`json:"askedInfos,omitempty"`		//0，在ASK_INF状态下，必须设置本次追问的具体参数名（开发者平台意图参数下配置的参数信息）	在ASK_INF状态下必须
-	Actions			[]ResponseValueAction	`json:"actions,omitempty"`			//0，播控类信息，目前只支持播放音频
+	Actions			[]ResponseValueAction	`json:"actions,omitempty"`			//0，播控类信息，支持播放音频素材和 TTS 文本
+	GwCommands		[]ResponseGwCommands	`json:"gwCommands,omitempty"`		//0，最新版响应协议定义的command结构
+	ConfirmParaInfo	ResponseConfirmParaInfo	`json:"confirmParaInfo,omitempty"`	//0，resultType: CONFIRM状态下可以携带的匹配用户[肯定]和[否定]回答的参数名称。
 	ExecuteCode		string					`json:"executeCode"`				//1，“SUCCESS”代表执行成功；“PARAMS_ERROR”代表接收到的请求参数出错；“EXECUTE_ERROR”代表自身代码有异常；“REPLY_ERROR”代表回复结果生成出错
 }
 
